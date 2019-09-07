@@ -1,0 +1,4 @@
+Number of states:
+8
+Alphabet:
+01X_
