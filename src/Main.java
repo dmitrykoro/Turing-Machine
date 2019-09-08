@@ -50,8 +50,42 @@ public class Main {
 
     }
 
+    private static void executeMachine() {
+        StringBuilder tempOperatingTape = new StringBuilder();
+        tempOperatingTape.setLength(1000);
+        for (int j = 0; j < tempOperatingTape.length(); j++)
+            tempOperatingTape.setCharAt(j, ' ');
+        for (int i = 500; i < 500 + inputtedTape.length; i++)
+            tempOperatingTape.setCharAt(i, inputtedTape[i - 500]);
+        //operatingTape.toString();
+        String operatingTape = tempOperatingTape.toString();
+        //operatingTape.toCharArray();
+
+        char currentValue;
+        int currentState = 0;
+        int currentPos = 500;
+        char[] command;
+
+        while (currentState != -1) {
+            ///
+            currentValue = operatingTape.charAt(currentPos);
+            command = statesMatrix[alphabet.indexOf(String.valueOf(currentValue))]
+                    [currentState].toCharArray();
+            operatingTape.toCharArray()[currentPos] = command[0];
+            if (command[2] == '>') {
+                currentPos++;
+            }
+            else if (command[2] == '<') {
+                currentPos--;
+            }
+            currentState = Character.getNumericValue(command[4]) - 1;
+            ///
+        }
+    }
+
     public static void main(String[] args) {
         operateFiles();
+        executeMachine();
     }
 
 
