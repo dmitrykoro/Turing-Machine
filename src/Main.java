@@ -1,5 +1,4 @@
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.Scanner;
 
 public class Main {
@@ -7,6 +6,7 @@ public class Main {
     private static StringBuilder alphabet = new StringBuilder();
     private static int numberOfStates;
     private static char[] inputtedTape;
+    private static String operatedTape = "";
 
     private static void operateFiles() {
         Scanner inputTape = null;
@@ -25,7 +25,7 @@ public class Main {
                 if (description.nextLine().equals("Number of states:")) {
                     numberOfStates = Integer.parseInt(description.nextLine());
                 }
-                if (description.nextLine().equals("Alphabet:")) {
+                if (description.nextLine().equals("Alphabet (with \"_\" at the end):")) {
                     alphabet.append(description.nextLine());
                 }
             } catch (NumberFormatException e) {
@@ -51,15 +51,10 @@ public class Main {
     }
 
     private static void executeMachine() {
-        StringBuilder tempOperatingTape = new StringBuilder();
-        tempOperatingTape.setLength(1000);
-        for (int j = 0; j < tempOperatingTape.length(); j++)
-            tempOperatingTape.setCharAt(j, ' ');
-        for (int i = 500; i < 500 + inputtedTape.length; i++)
-            tempOperatingTape.setCharAt(i, inputtedTape[i - 500]);
-        //operatingTape.toString();
-        String operatingTape = tempOperatingTape.toString();
-        //operatingTape.toCharArray();
+        char[] operatingTape = new char[1000];
+        for (int j = 0; j < operatingTape.length; j++)
+            operatingTape[j] = '_';
+        System.arraycopy(inputtedTape, 0, operatingTape, 500, 500 + inputtedTape.length - 500);
 
         char currentValue;
         int currentState = 0;
@@ -67,26 +62,38 @@ public class Main {
         char[] command;
 
         while (currentState != -1) {
-            ///
-            currentValue = operatingTape.charAt(currentPos);
-            command = statesMatrix[alphabet.indexOf(String.valueOf(currentValue))]
-                    [currentState].toCharArray();
-            operatingTape.toCharArray()[currentPos] = command[0];
+            currentValue = operatingTape[currentPos];
+            command = statesMatrix[alphabet.indexOf(String.valueOf(currentValue))][currentState].toCharArray();
+            operatingTape[currentPos] = command[0];
+
             if (command[2] == '>') {
                 currentPos++;
-            }
-            else if (command[2] == '<') {
+            } else if (command[2] == '<') {
                 currentPos--;
             }
             currentState = Character.getNumericValue(command[4]) - 1;
-            ///
+        }
+
+        for (int k = 0; k < operatingTape.length; k++) {
+            if (operatingTape[k] != '_') {
+                operatedTape += operatingTape[k];
+            }
+        }
+    }
+
+    private static void writeResult() {
+        try {
+            BufferedWriter wr = new BufferedWriter(new FileWriter("data//result.txt"));
+            wr.write(operatedTape);
+            wr.close();
+        } catch (IOException e) {
+            System.out.println("Error: the result file doesn't exist");
         }
     }
 
     public static void main(String[] args) {
         operateFiles();
         executeMachine();
+        writeResult();
     }
-
-
 }

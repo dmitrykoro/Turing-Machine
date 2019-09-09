@@ -1,4 +1,4 @@
 Number of states:
 8
-Alphabet:
+Alphabet (with "_" at the end):
 01X_
